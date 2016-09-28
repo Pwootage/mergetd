@@ -8,13 +8,15 @@ public class EnemyAI : MonoBehaviour {
 	public float health = 20;
 	public int moneyValue = 3;
 	public Queue<Vector2> path = new Queue<Vector2>();
+	private GameState state;
 
 	void Start() {
+		state = GameState.FindInScene();
 	}
 
 	void Update() {
 		if (health <= 0) {
-			GameObject.Find("FloorController").GetComponent<TowerBuilder>().AddMoney(moneyValue);
+			state.GiveMoney(moneyValue);
 			Destroy(this.gameObject);
 		} else if (path.Count > 0) {
 			Vector2 target = path.Peek();
@@ -33,7 +35,7 @@ public class EnemyAI : MonoBehaviour {
 		if (baseController != null) {
 			Debug.Log("Hit a base!");
 			Destroy(this.gameObject);
-			baseController.TakeDamage();
+			state.TakeDamage(1);
 		}
 	}
 

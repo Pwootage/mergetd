@@ -11,7 +11,6 @@ public class FloorGenerator : MonoBehaviour {
 	private GameObject[] generatedTiles;
 
 	void Start() {
-		GameObject.Find("Win Text").SetActive(false);
 		//Setup click collider
 		BoxCollider2D clickCollider = gameObject.GetComponent<BoxCollider2D>();
 		clickCollider.offset = transform.position + new Vector3(width / 2.0f, height / 2.0f) - new Vector3(0.5f, 0.5f);
