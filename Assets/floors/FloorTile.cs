@@ -2,13 +2,15 @@
 using System.Collections;
 
 public class FloorTile : MonoBehaviour {
+	void Start() {
+		
+	}
 
-
-	void Start () {
+	void Update() {
 	
 	}
-	
-    void Update () {
-	
+
+	public void SetSprite(Sprite sprite) {
+		GetComponent<SpriteRenderer>().sprite = sprite;
 	}
 }
