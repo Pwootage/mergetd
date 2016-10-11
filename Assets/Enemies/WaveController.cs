@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WaveController : MonoBehaviour {
 	public GameObject enemyType;
@@ -9,6 +10,7 @@ public class WaveController : MonoBehaviour {
 	public float timeBeforeWave = 20;
 	private float timer;
 	public GameState state;
+	public List<Vector2> path = new List<Vector2>();
 
 	void Start() {
 		state = GameState.FindInScene();
@@ -29,8 +31,9 @@ public class WaveController : MonoBehaviour {
 				GameObject enemy = GameObject.Instantiate(enemyType);
 				enemy.transform.position = gameObject.transform.position;
 				EnemyAI ai = enemy.GetComponent<EnemyAI>();
-				ai.path.Enqueue(new Vector2(playerBase.transform.position.x, gameObject.transform.position.x));
-				ai.path.Enqueue(playerBase.transform.position);
+				foreach (Vector2 waypoint in path) {
+					ai.path.Enqueue(waypoint);
+				}
 			}
 		}
 		UpdateTimerUI();
