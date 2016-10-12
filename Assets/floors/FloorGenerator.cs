@@ -30,6 +30,9 @@ public class FloorGenerator : MonoBehaviour {
 			
 		GameMap map = MapLoader.LoadRandomMap();
 
+		width = map.width;
+		height = map.height;
+
 		//Create tiles
 		generatedTiles = new GameObject[width * height];
 		for (int x = 0; x < width; x++) {
