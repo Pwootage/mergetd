@@ -1,62 +1,65 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class FloorCamera : MonoBehaviour {
-	public GameObject floorGenerator;
-	public float zoom;
-	public float maxZoom = 4;
-	public float minZoom = 1;
-	public Vector3 targetBase;
-	public Vector3 targetOffset;
+    private float boardSize;
+    private Camera cam;
+    public GameObject floorGenerator;
+    public float maxZoom = 4;
+    public float minZoom = 1;
+    public Vector3 targetBase;
+    public Vector3 targetOffset;
+    public float zoom;
 
-	private float boardSize;
-	private Camera cam;
 
+    private void Start() {
+        zoom = minZoom;
+    }
 
-	void Start() {
-		cam = this.GetComponent<Camera>();
-		zoom = minZoom;
+    public void UpdateCamera(FloorGenerator gen) {
+        cam = GetComponent<Camera>();
+        zoom = minZoom;
 
-		FloorGenerator gen = floorGenerator.GetComponent<FloorGenerator>();
-		targetBase = gen.transform.position + new Vector3(-0.5f, -0.5f, -10);
-		targetOffset = new Vector3(gen.width, gen.height) / 2f;
-		boardSize = ((float)Mathf.Max(gen.width, gen.height)) / 2f;
+        targetBase = gen.transform.position + new Vector3(-0.5f, -0.5f, -10);
+        targetOffset = new Vector3(gen.map.width, gen.map.height) / 2f;
+        boardSize = Mathf.Max(gen.map.width, gen.map.height) / 2f;
+        cam.orthographicSize = boardSize / zoom;
 
-		this.transform.position = Target();
-	}
+        transform.position = Target();
+    }
 
-	void Update() {
-		if (Input.GetKey("[")) {
-			zoom -= Time.deltaTime * 2;
-			if (zoom < minZoom) {
-				zoom = minZoom;
-			}
-		} else if (Input.GetKey("]")) {
-			zoom += Time.deltaTime * 2;
-			if (zoom > maxZoom) {
-				zoom = maxZoom;
-			}
-		}
+    private void Update() {
+        if (Input.GetKey("[")) {
+            zoom -= Time.deltaTime * 2;
+            if (zoom < minZoom) {
+                zoom = minZoom;
+            }
+        }
+        else if (Input.GetKey("]")) {
+            zoom += Time.deltaTime * 2;
+            if (zoom > maxZoom) {
+                zoom = maxZoom;
+            }
+        }
 
-		if (Input.GetKeyDown("left")) {
-			this.targetOffset += new Vector3(-1, 0);
-		}
-		if (Input.GetKeyDown("right")) {
-			this.targetOffset += new Vector3(1, 0);
-		}
-		if (Input.GetKeyDown("up")) {
-			this.targetOffset += new Vector3(0, 1);
-		}
-		if (Input.GetKeyDown("down")) {
-			this.targetOffset += new Vector3(0, -1);
-		}
-			
-		cam.orthographicSize = boardSize / zoom;
-		Vector3 target = Target();
-		this.transform.position = Vector3.MoveTowards(transform.position, target, Time.deltaTime * 10);
-	}
+        if (Input.GetKeyDown("left")) {
+            targetOffset += new Vector3(-1, 0);
+        }
+        if (Input.GetKeyDown("right")) {
+            targetOffset += new Vector3(1, 0);
+        }
+        if (Input.GetKeyDown("up")) {
+            targetOffset += new Vector3(0, 1);
+        }
+        if (Input.GetKeyDown("down")) {
+            targetOffset += new Vector3(0, -1);
+        }
 
-	Vector3 Target() {
-		return targetBase + targetOffset;
-	}
+        cam.orthographicSize = boardSize / zoom;
+        var target = Target();
+        transform.position = Vector3.MoveTowards(transform.position, target, Time.deltaTime * 10);
+    }
+
+    private Vector3 Target() {
+        return targetBase + targetOffset;
+    }
 }

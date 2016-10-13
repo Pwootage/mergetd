@@ -2,20 +2,22 @@
 using System.Collections;
 
 public class FloorGenerator : MonoBehaviour {
-	public int width = 20;
-	public int height = 20;
 	public Sprite[] floorTiles = { };
 	public GameObject floorTileObject;
 	public GameObject playerBase;
 	public GameObject enemySpawner;
-	private GameMap map;
+	public GameMap map;
 	private GameObject[] generatedTiles;
 
 	void Start() {
-		//Setup click collider
-		BoxCollider2D clickCollider = gameObject.GetComponent<BoxCollider2D>();
-		clickCollider.offset = transform.position + new Vector3(width / 2.0f, height / 2.0f) - new Vector3(0.5f, 0.5f);
-		clickCollider.size = new Vector2(width, height);
+        map = MapLoader.LoadRandomMap();
+
+        GameObject.Find("Main Camera").GetComponent<FloorCamera>().UpdateCamera(this);
+
+        //Setup click collider
+        BoxCollider2D clickCollider = gameObject.GetComponent<BoxCollider2D>();
+		clickCollider.offset = transform.position + new Vector3(map.width / 2.0f, map.height / 2.0f) - new Vector3(0.5f, 0.5f);
+		clickCollider.size = new Vector2(map.width, map.height);
 
 		//Pick tile types
 		int pathTileType = Random.Range(0, floorTiles.Length - 1);
@@ -27,16 +29,11 @@ public class FloorGenerator : MonoBehaviour {
 		do {
 			otherTileType = Random.Range(0, floorTiles.Length - 1);
 		} while (otherTileType == pathTileType || otherTileType == borderTileType);
-			
-		GameMap map = MapLoader.LoadRandomMap();
-
-		width = map.width;
-		height = map.height;
 
 		//Create tiles
-		generatedTiles = new GameObject[width * height];
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		generatedTiles = new GameObject[map.width * map.height];
+		for (int x = 0; x < map.width; x++) {
+			for (int y = 0; y < map.height; y++) {
 				int ind = map.getTileIndex(x, y);
 				GameMap.TileType type = map.tiles[ind];
 				GameObject tile = GameObject.Instantiate(floorTileObject);

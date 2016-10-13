@@ -17,7 +17,7 @@ public class MapLoader {
 			Debug.LogError("Failed to load map id " + mapID);
 		}
 
-		string[] mapInfoLines = mapInfo.text.Split('\n');
+		string[] mapInfoLines = mapInfo.text.Replace("\r\n", "\n").Split('\n');
 		int lineNumber = 0;
 
 		int width = 0;
