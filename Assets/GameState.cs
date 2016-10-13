@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameState : MonoBehaviour {
+    public readonly int towerCount = 5;
 	public int starterMoney = 20;
 	public int startLives = 10;
-	private int lives;
+    public List<GameObject> towers = new List<GameObject>();
+    public GameMap map;
+    private int lives;
 	private int money;
 	private UIController uiController;
 	private bool spawning;

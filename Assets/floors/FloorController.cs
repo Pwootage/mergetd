@@ -1,23 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class FloorGenerator : MonoBehaviour {
+public class FloorController : MonoBehaviour {
 	public Sprite[] floorTiles = { };
 	public GameObject floorTileObject;
 	public GameObject playerBase;
 	public GameObject enemySpawner;
-	public GameMap map;
 	private GameObject[] generatedTiles;
+    private GameState state;
 
 	void Start() {
-        map = MapLoader.LoadRandomMap();
+        state = GameState.FindInScene();
+        state.map = MapLoader.LoadRandomMap();
 
-        GameObject.Find("Main Camera").GetComponent<FloorCamera>().UpdateCamera(this);
+        GameObject.Find("Main Camera").GetComponent<FloorCamera>().UpdateCamera();
 
         //Setup click collider
         BoxCollider2D clickCollider = gameObject.GetComponent<BoxCollider2D>();
-		clickCollider.offset = transform.position + new Vector3(map.width / 2.0f, map.height / 2.0f) - new Vector3(0.5f, 0.5f);
-		clickCollider.size = new Vector2(map.width, map.height);
+		clickCollider.offset = transform.position + new Vector3(state.map.width / 2.0f, state.map.height / 2.0f) - new Vector3(0.5f, 0.5f);
+		clickCollider.size = new Vector2(state.map.width, state.map.height);
 
 		//Pick tile types
 		int pathTileType = Random.Range(0, floorTiles.Length - 1);
@@ -31,11 +33,11 @@ public class FloorGenerator : MonoBehaviour {
 		} while (otherTileType == pathTileType || otherTileType == borderTileType);
 
 		//Create tiles
-		generatedTiles = new GameObject[map.width * map.height];
-		for (int x = 0; x < map.width; x++) {
-			for (int y = 0; y < map.height; y++) {
-				int ind = map.getTileIndex(x, y);
-				GameMap.TileType type = map.tiles[ind];
+		generatedTiles = new GameObject[state.map.width * state.map.height];
+		for (int x = 0; x < state.map.width; x++) {
+			for (int y = 0; y < state.map.height; y++) {
+				int ind = state.map.getTileIndex(x, y);
+				GameMap.TileType type = state.map.tiles[ind];
 				GameObject tile = GameObject.Instantiate(floorTileObject);
 				FloorTile floorTile = tile.GetComponent<FloorTile>();
 
@@ -58,17 +60,17 @@ public class FloorGenerator : MonoBehaviour {
 		}
 
 		//Move the base into the correct location
-		playerBase.transform.position = transform.position + new Vector3(map.pointa.x, map.pointa.y);
-		enemySpawner.transform.position = transform.position + new Vector3(map.pointb.x, map.pointb.y);
+		playerBase.transform.position = transform.position + new Vector3(state.map.pointa.x, state.map.pointa.y);
+		enemySpawner.transform.position = transform.position + new Vector3(state.map.pointb.x, state.map.pointb.y);
 
 		WaveController wave = enemySpawner.GetComponent<WaveController>();
-		wave.path = map.path;
+		wave.path = state.map.path;
 	}
 
 	void Update() {
         // Clean up projectiles
 	    float buffer = 0.1f;
-        Rect gameboard = new Rect(transform.position.x - buffer, transform.position.y - buffer, map.width + buffer * 2, map.height + buffer * 2);
+        Rect gameboard = new Rect(transform.position.x - buffer, transform.position.y - buffer, state.map.width + buffer * 2, state.map.height + buffer * 2);
 
 	    GameObject[] projectiles = GameObject.FindGameObjectsWithTag("Projectile");
 

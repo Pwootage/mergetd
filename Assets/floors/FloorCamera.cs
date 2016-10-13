@@ -9,19 +9,24 @@ public class FloorCamera : MonoBehaviour {
     public Vector3 targetBase;
     public Vector3 targetOffset;
     public float zoom;
+    private GameState state;
 
 
     private void Start() {
+        state = GameState.FindInScene();
         zoom = minZoom;
     }
 
-    public void UpdateCamera(FloorGenerator gen) {
+    public void UpdateCamera() {
+        if (state == null) {
+            state = GameState.FindInScene();
+        }
         cam = GetComponent<Camera>();
         zoom = minZoom;
 
-        targetBase = gen.transform.position + new Vector3(-0.5f, -0.5f, -10);
-        targetOffset = new Vector3(gen.map.width, gen.map.height) / 2f;
-        boardSize = Mathf.Max(gen.map.width, gen.map.height) / 2f;
+        targetBase = new Vector3(-0.5f, -0.5f, -10);
+        targetOffset = new Vector3(state.map.width, state.map.height) / 2f;
+        boardSize = Mathf.Max(state.map.width, state.map.height) / 2f;
         cam.orthographicSize = boardSize / zoom;
 
         transform.position = Target();
