@@ -1,20 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TowerAI : MonoBehaviour {
     public GameObject turret;
     public GameObject bullet;
-    public float attackSpeed = 1;
-    public float range = 4;
-    float attackTimer;
+    public TowerStatsBasic stats;
+    public List<TowerStatModifier> statModifiers = new List<TowerStatModifier>();
+
+    private float attackTimer;
 
 	void Start () {
-	    attackTimer = attackSpeed;
+	    attackTimer = stats.getRateOfFire();
 	}
 	
 	void Update () {
 	    if (attackTimer <= 0) {
-	        Collider2D[] objects = Physics2D.OverlapCircleAll(gameObject.transform.position, range);
+	        Collider2D[] objects = Physics2D.OverlapCircleAll(gameObject.transform.position, stats.getRange());
 	        foreach (Collider2D obj in objects) {
 	            EnemyAI enemy = obj.gameObject.GetComponent<EnemyAI>();
 	            if (enemy != null) {
@@ -24,7 +26,7 @@ public class TowerAI : MonoBehaviour {
 	                Projectile projectile = newBullet.GetComponent<Projectile>();
                     projectile.Target = obj.gameObject;
 
-	                attackTimer = attackSpeed;
+	                attackTimer = stats.getRateOfFire();
 					SetTurretLookAt(obj.gameObject);
 	                break;
 	            }
