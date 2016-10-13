@@ -20,8 +20,10 @@ public class TowerAI : MonoBehaviour {
 	            if (enemy != null) {
 	                GameObject newBullet = GameObject.Instantiate(bullet);
 	                newBullet.transform.position = gameObject.transform.position;
-	                BulletAI bulletAi = newBullet.GetComponent<BulletAI>();
-	                bulletAi.target = obj.gameObject;
+
+	                Projectile projectile = newBullet.GetComponent<Projectile>();
+                    projectile.Target = obj.gameObject;
+
 	                attackTimer = attackSpeed;
 					SetTurretLookAt(obj.gameObject);
 	                break;
