@@ -3,39 +3,22 @@ using UnityEditor;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour {
-    #region Constants
-
-    private const int DEFAULT_RANGE = 5;
-    private const int DEFAULT_DAMAGE = 1;
-    private const int DEFAULT_SPEED = 5;
-
-    #endregion
-
     #region Editor Properties
 
     // Basic stats
-    public float Range = DEFAULT_RANGE;
-    public float Damage = DEFAULT_RANGE;
-    public float Speed = DEFAULT_SPEED;
+    public float Damage = 5;
+    public float Speed = 5;
 
     // Homing
     [Range(0, 30)] public float HomingStrength;
-
-    // Slow Effect
-    public float SlowMultiplier = 0;
-    public float SlowDuration = 0;
 
     // Piercing
     public int PierceCount = 0;
     public bool AllowMultipleHitsOnSameEnemy = false;
 
-    // Splash Effect
+    // Splash
     public float SplashDamageMultiplier = 0;
     public float SplashRadius = 0;
-
-    // DoT Effect
-    public float DoTDamage = 0;
-    public float DoTDuration = 0;
 
     #endregion
 
