@@ -67,7 +67,7 @@ public class FloorGenerator : MonoBehaviour {
 
 	void Update() {
         // Clean up projectiles
-	    float buffer = 1;
+	    float buffer = 0.1f;
         Rect gameboard = new Rect(transform.position.x - buffer, transform.position.y - buffer, map.width + buffer * 2, map.height + buffer * 2);
 
 	    GameObject[] projectiles = GameObject.FindGameObjectsWithTag("Projectile");

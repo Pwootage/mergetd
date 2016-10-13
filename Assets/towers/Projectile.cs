@@ -23,9 +23,10 @@ public class Projectile : MonoBehaviour {
 
     private GameObject _Target = null;
 
+    public TowerStats Stats;
+
     private HashSet<EnemyAI> enemiesHit = new HashSet<EnemyAI>();
     private int pierceCount = 0;
-    private TowerStats stats = new TowerStatsBasic();
 
     #endregion
 
@@ -34,21 +35,17 @@ public class Projectile : MonoBehaviour {
     public Projectile() {
     }
 
-    public void SetStats(TowerStats stats) {
-        this.stats = stats; 
-    }
-
     public void Start() {
     }
 
     public void Update() {
         //Homing
-        if (Target != null && stats.getHomingStrength() > 0) {
+        if (Target != null && Stats.getHomingStrength() > 0) {
             Vector2 directionToTarget = (Target.transform.position - gameObject.transform.position).normalized;
-            Direction = Vector2.Lerp(Direction, directionToTarget, stats.getHomingStrength() * Time.deltaTime);
+            Direction = Vector2.Lerp(Direction, directionToTarget, Stats.getHomingStrength() * Time.deltaTime);
         }
 
-        Vector3 moveAmount = Direction * stats.getProjectileSpeed() * Time.deltaTime;
+        Vector3 moveAmount = Direction * Stats.getProjectileSpeed() * Time.deltaTime;
         gameObject.transform.position += moveAmount;
     }
 
@@ -58,13 +55,13 @@ public class Projectile : MonoBehaviour {
             return;
         }
 
-        if (stats.canHitSameTargetMultipleTimes() || !enemiesHit.Contains(enemy)) {
-            enemy.damage(stats.getDamage());
+        if (Stats.canHitSameTargetMultipleTimes() || !enemiesHit.Contains(enemy)) {
+            enemy.damage(Stats.getDamage());
             enemiesHit.Add(enemy);
             pierceCount++;
         }
 
-        if (pierceCount > stats.getPierceCount()) {
+        if (pierceCount > Stats.getPierceCount()) {
             Destroy(this.gameObject);
         }
     }

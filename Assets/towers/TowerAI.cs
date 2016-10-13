@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class TowerAI : MonoBehaviour {
     public GameObject turret;
@@ -16,7 +17,9 @@ public class TowerAI : MonoBehaviour {
 	
 	void Update () {
 	    if (attackTimer <= 0) {
-	        Collider2D[] objects = Physics2D.OverlapCircleAll(gameObject.transform.position, stats.getRange());
+            TowerStats finalStats = statModifiers.Aggregate((TowerStats)stats, (s, m) => m.applyModifier(s));
+
+            Collider2D[] objects = Physics2D.OverlapCircleAll(gameObject.transform.position, stats.getRange());
 	        foreach (Collider2D obj in objects) {
 	            EnemyAI enemy = obj.gameObject.GetComponent<EnemyAI>();
 	            if (enemy != null) {
@@ -24,6 +27,7 @@ public class TowerAI : MonoBehaviour {
 	                newBullet.transform.position = gameObject.transform.position;
 
 	                Projectile projectile = newBullet.GetComponent<Projectile>();
+                    projectile.Stats = finalStats;
                     projectile.Target = obj.gameObject;
 
 	                attackTimer = stats.getRateOfFire();
