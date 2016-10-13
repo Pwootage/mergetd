@@ -41,7 +41,7 @@ public class UIController : MonoBehaviour {
     }
 
     public void updateStatView(int index, TowerStats stats) {
-        towerStatUI.text = "Tower " + (index + 1) +
+        towerStatUI.text = stats.description() +
                            "\nCost:" + stats.getCost() +
                            "\nAttack Rate: " + stats.getRateOfFire() +
                            "\nDamage: " + stats.getDamage() +
