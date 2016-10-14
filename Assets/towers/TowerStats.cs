@@ -126,6 +126,7 @@ public class FlatAttackDamageBoost: TowerStatModifier {
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
         ret.damage += amount;
+        ret.cost += Mathf.CeilToInt(amount * 5);
         return ret;
     }
 }
@@ -140,6 +141,7 @@ public class FlatRangeBoost : TowerStatModifier {
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
         ret.range += amount;
+        ret.cost += Mathf.CeilToInt(amount * 20);
         return ret;
     }
 }
@@ -155,6 +157,7 @@ public class PercentAttackSpeedBoost : TowerStatModifier {
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
         ret.rateOfFire *= amount;
+        ret.cost += Mathf.CeilToInt((1 - amount) * 20);
         return ret;
     }
 }
