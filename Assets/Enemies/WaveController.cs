@@ -1,49 +1,90 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
+[Serializable]
+public class Wave {
+	public EnemyStats stats;
+	public int spawnCount;
+	public float timeBetweenSpawns = 1;
+}
 
 public class WaveController : MonoBehaviour {
 	public GameObject enemyType;
 	public GameObject playerBase;
-	public int spawnCount = 10;
-	public float timePerSpawn = 1;
-	public float timeBeforeWave = 20;
-	private float timer;
-	public GameState state;
+	public float timeBetweenWaves = 5;
+	public List<Wave> waves = new List<Wave>();
+	[HideInInspector]
 	public List<Vector2> path = new List<Vector2>();
+	private int currentWaveNumber = 0;
+	private int currentSpawnNumber = 0;
+	private float timeUntilNextSpawn = 0;
+	private float timeUntilNextWave = 0;
+	private GameState state;
 
 	void Start() {
 		state = GameState.FindInScene();
-		timer = timePerSpawn;
+		timeUntilNextWave = timeBetweenWaves * 2;;
 	}
 
 	void Update() {
-		if (timeBeforeWave >= 0) {
-			timeBeforeWave -= Time.deltaTime;
-		} else if (spawnCount <= 0) {
-			state.NotifySpawningIsDone();
-		} else {
-			timer -= Time.deltaTime;
-			if (timer <= 0) {
-				UpdateTimerUI();
-				spawnCount -= 1;
-				timer += timePerSpawn;
-				GameObject enemy = GameObject.Instantiate(enemyType);
-				enemy.transform.position = gameObject.transform.position;
-				EnemyAI ai = enemy.GetComponent<EnemyAI>();
-				foreach (Vector2 waypoint in path) {
-					ai.path.Enqueue(waypoint);
-				}
-			}
+		//Done with all waves
+		if (currentWaveNumber >= waves.Count) {
+			return;
 		}
+
+		Wave currentWave = waves[currentWaveNumber];
+
+		// Wait for next wave
+		if (timeUntilNextWave >= 0) {
+			timeUntilNextWave -= Time.deltaTime;
+			UpdateTimerUI();
+			return;
+		}
+
+		// Check to see if wave is done
+		if (currentSpawnNumber >= currentWave.spawnCount) {
+			currentWaveNumber++;
+			if (currentWaveNumber >= waves.Count) {
+				state.NotifySpawningIsDone();
+				return;
+			}
+			currentSpawnNumber = 0;
+			Wave nextWave = waves[currentWaveNumber];
+			timeUntilNextWave = timeBetweenWaves;
+			timeUntilNextSpawn = nextWave.timeBetweenSpawns;
+			return;
+		}
+
+		// Wait for spawn
+		if (timeUntilNextSpawn >=  0) {
+			timeUntilNextSpawn -= Time.deltaTime;
+			UpdateTimerUI();
+			return;
+		}
+
+		//Actual spawn
+		GameObject enemy = GameObject.Instantiate(enemyType);
+		enemy.transform.position = gameObject.transform.position;
+		EnemyAI ai = enemy.GetComponent<EnemyAI>();
+		foreach (Vector2 waypoint in path) {
+			ai.path.Enqueue(waypoint);
+		}
+		ai.stats = currentWave.stats;
+
+		// Next spawn
+		timeUntilNextSpawn += currentWave.timeBetweenSpawns;
 		UpdateTimerUI();
+		currentSpawnNumber++;
 	}
 
 	void UpdateTimerUI() {
-		if (timeBeforeWave >= 0) {
-			state.GetUIController().UpdateTimeUntilWave(timeBeforeWave);
-		} else {
-			state.GetUIController().UpdateSpawnsRemaining(spawnCount);
+		if (timeUntilNextWave >= 0) {
+			state.GetUIController().UpdateTimeUntilWave(timeUntilNextWave);
+		} else if (currentWaveNumber < waves.Count) {
+			Wave currentWave = waves[currentWaveNumber];
+			state.GetUIController().UpdateSpawnsRemaining(currentWave.spawnCount - currentSpawnNumber);
 		}
 	}
 }

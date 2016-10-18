@@ -3,20 +3,26 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyAI : MonoBehaviour {
-	public float speed = 1;
+[Serializable]
+public class EnemyStats {
 	public float health = 20;
-	public int moneyValue = 3;
+	public float speed = 1;
+	public int value = 3;
+}
+
+public class EnemyAI : MonoBehaviour {
+	public EnemyStats stats = new EnemyStats();
 	public Queue<Vector2> path = new Queue<Vector2>();
 	private GameState state;
+	private float damageTaken = 0;
 
 	void Start() {
 		state = GameState.FindInScene();
 	}
 
 	void Update() {
-		if (health <= 0) {
-			state.GiveMoney(moneyValue);
+		if (damageTaken > stats.health) {
+			state.GiveMoney(stats.value);
 			Destroy(this.gameObject);
 		} else if (path.Count > 0) {
 			Vector2 target = path.Peek();
@@ -25,7 +31,7 @@ public class EnemyAI : MonoBehaviour {
 				path.Dequeue();
 				Update();
 			} else {
-				transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.deltaTime);
+				transform.position = Vector2.MoveTowards(transform.position, target, stats.speed * Time.deltaTime);
 			}
 		}
 	}
@@ -40,6 +46,6 @@ public class EnemyAI : MonoBehaviour {
 	}
 
 	public void damage(float f) {
-		health -= f;
+		damageTaken += f;
 	}
 }

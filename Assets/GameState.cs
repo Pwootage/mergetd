@@ -44,6 +44,7 @@ public class GameState : MonoBehaviour {
 
 	public void GiveMoney(int moneyValue) {
 		this.money += moneyValue;
+		uiController.UpdateMoneyLabel(this.money);
 	}
 
 	/**
