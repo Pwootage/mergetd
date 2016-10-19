@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 [Serializable]
 public class EnemyStats {
@@ -10,9 +10,21 @@ public class EnemyStats {
 	public int value = 3;
 }
 
+[Serializable]
+public class EnemyEffect {
+	public float slowMultiplier = 1;
+	public float damagePerSecond = 0;
+	public float duration = 0;
+
+	public EnemyEffect clone() {
+		return (EnemyEffect)this.MemberwiseClone();
+	}
+}
+
 public class EnemyAI : MonoBehaviour {
 	public EnemyStats stats = new EnemyStats();
 	public Queue<Vector2> path = new Queue<Vector2>();
+	public List<EnemyEffect> effects = new List<EnemyEffect>();
 	private GameState state;
 	private float damageTaken = 0;
 
@@ -21,6 +33,17 @@ public class EnemyAI : MonoBehaviour {
 	}
 
 	void Update() {
+		float deltaTime = Time.deltaTime;
+		float speed = stats.speed;
+		// Process Effects
+		foreach (EnemyEffect effect in effects) {
+			effect.duration -= deltaTime;
+			this.damage(effect.damagePerSecond * deltaTime);
+			speed *= effect.slowMultiplier;
+		}
+		effects = effects.Where(effect => effect.duration > 0).ToList();
+
+
 		if (damageTaken > stats.health) {
 			state.GiveMoney(stats.value);
 			Destroy(this.gameObject);
@@ -31,7 +54,7 @@ public class EnemyAI : MonoBehaviour {
 				path.Dequeue();
 				Update();
 			} else {
-				transform.position = Vector2.MoveTowards(transform.position, target, stats.speed * Time.deltaTime);
+				transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.deltaTime);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Projectile : MonoBehaviour {
     #region Non-Editor Properties
@@ -56,6 +57,7 @@ public class Projectile : MonoBehaviour {
 
         if (Stats.canHitSameTargetMultipleTimes() || !enemiesHit.Contains(enemy)) {
             enemy.damage(Stats.getDamage());
+			enemy.effects.AddRange(Stats.getEffects().Select(effect => effect.clone()));
             enemiesHit.Add(enemy);
             pierceCount++;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public interface TowerStats {
     string description();
@@ -20,10 +21,13 @@ public interface TowerStats {
     float getSplashDamageMultiplier();
 
     float getHomingStrength();
+
+	List<EnemyEffect> getEffects();
 }
 
 [Serializable]
 public class TowerStatsBasic : TowerStats {
+	public string descriptionStr = "Basic Tower";
     public int cost = 10;
     public float range = 4;
     public float rateOfFire = 1;
@@ -34,12 +38,12 @@ public class TowerStatsBasic : TowerStats {
     public float splashRadius = 0;
     public float splashDamageMultiplier = 0;
     [Range(0, 30)] public float homingStrength = 0;
-    public string descriptionStr = "Basic Tower";
+	public List<EnemyEffect> effects = new List<EnemyEffect>();
 
     public TowerStatsBasic() {
     }
 
-    public TowerStatsBasic(String description,int cost, float range, float rateOfFire, float damage, int pierceCount, bool hitSameTargetMultipleTimes, float projectileSpeed, float splashRadius, float splashDamageMultiplier, float homingStrength) {
+	public TowerStatsBasic(String description,int cost, float range, float rateOfFire, float damage, int pierceCount, bool hitSameTargetMultipleTimes, float projectileSpeed, float splashRadius, float splashDamageMultiplier, float homingStrength, List<EnemyEffect> effects) {
         this.descriptionStr = description;
         this.cost = cost;
         this.range = range;
@@ -51,6 +55,7 @@ public class TowerStatsBasic : TowerStats {
         this.splashRadius = splashRadius;
         this.splashDamageMultiplier = splashDamageMultiplier;
         this.homingStrength = homingStrength;
+		this.effects = effects;
     }
 
     public TowerStatsBasic(TowerStats toCopy) {
@@ -64,6 +69,10 @@ public class TowerStatsBasic : TowerStats {
         this.splashRadius = toCopy.getSplashRadius();
         this.splashDamageMultiplier = toCopy.getSplashDamageMultiplier();
         this.homingStrength = toCopy.getHomingStrength();
+		this.effects = new List<EnemyEffect>();
+		foreach (EnemyEffect effect in effects) {
+			this.effects.Add(effect.clone());
+		}
     }
 
     public string description() {
@@ -109,6 +118,10 @@ public class TowerStatsBasic : TowerStats {
     public float getHomingStrength() {
         return homingStrength;
     }
+
+	public List<EnemyEffect> getEffects() {
+		return effects;
+	}
 }
 
 public abstract class TowerStatModifier {

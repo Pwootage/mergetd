@@ -41,10 +41,18 @@ public class UIController : MonoBehaviour {
     }
 
     public void updateStatView(int index, TowerStats stats) {
-        towerStatUI.text = stats.description() +
-                           "\nCost:" + stats.getCost() +
-                           "\nAttack Rate: " + stats.getRateOfFire() +
-                           "\nDamage: " + stats.getDamage() +
-                           "\nRange: " + stats.getRange();
+		string text = stats.description() +
+		              "\nCost:" + stats.getCost() +
+		              "\nAttack Rate: " + stats.getRateOfFire() +
+		              "\nDamage: " + stats.getDamage() +
+		              "\nRange: " + stats.getRange();
+
+		foreach (EnemyEffect effect in stats.getEffects()) {
+			text += "\nSlow: " + ((1-effect.slowMultiplier) * 100) + "%" +
+				"\nDamage Per Second: " + effect.damagePerSecond +
+				"\nDuration: " + effect.duration + "s";
+		}
+
+        towerStatUI.text = text;
     }
 }
