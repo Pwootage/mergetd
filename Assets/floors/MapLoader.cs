@@ -8,7 +8,7 @@ public class MapLoader {
 	const int MAP_COUNT = 6;
 
 	public static GameMap LoadRandomMap() {
-		int mapID = UnityEngine.Random.Range(1, MAP_COUNT);
+		int mapID = UnityEngine.Random.Range(1, MAP_COUNT + 1);
 
 		TextAsset mapInfo = Resources.Load("maps/map" + mapID) as TextAsset;
 		TextAsset mapData = Resources.Load("maps/map" + mapID + ".map") as TextAsset;

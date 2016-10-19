@@ -22,14 +22,15 @@ public class FloorController : MonoBehaviour {
 		clickCollider.size = new Vector2(state.map.width, state.map.height);
 
 		//Pick tile types
-		int pathTileType = Random.Range(0, floorTiles.Length - 1);
+		Random.InitState((int)System.DateTime.Now.Ticks);
+		int pathTileType = Random.Range(0, floorTiles.Length);
 		int borderTileType;
 		do {
-			borderTileType = Random.Range(0, floorTiles.Length - 1);
+			borderTileType = Random.Range(0, floorTiles.Length);
 		} while (borderTileType == pathTileType);
 		int otherTileType;
 		do {
-			otherTileType = Random.Range(0, floorTiles.Length - 1);
+			otherTileType = Random.Range(0, floorTiles.Length);
 		} while (otherTileType == pathTileType || otherTileType == borderTileType);
 
 		//Create tiles
