@@ -54,6 +54,7 @@ public class EnemyAI : MonoBehaviour {
 				path.Dequeue();
 				Update();
 			} else {
+                RotateTowards(target);
 				transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.deltaTime);
 			}
 		}
@@ -71,4 +72,11 @@ public class EnemyAI : MonoBehaviour {
 	public void damage(float f) {
 		damageTaken += f;
 	}
+
+    public void RotateTowards(Vector2 targetPos) {
+        float rotateSpeed = 1;
+        targetPos.y = transform.position.y;
+        var rotation = Quaternion.LookRotation(targetPos - (Vector2)transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotateSpeed);
+    }
 }
