@@ -5,20 +5,39 @@ using System;
 
 [Serializable]
 public class Wave {
-    public GreenInfantryStats GIStats;
-	public BlueInfantryStats BIStats;
-    public RedInfantryStats RIStats;
-    public GreenMechStats GMStats;
-    public BlueMechStats BMStats;
-    public RedMechStats RMStats;
-    public GreenTankStats GTStats;
-    public BlueTankStats BTStats;
-    public RedTankStats RTStats;
-    public int spawnCount;
+	public EnemyStats GIStats;
+	public EnemyStats BIStats;
+	public EnemyStats RIStats;
+
+	public EnemyStats GMStats;
+	public EnemyStats BMStats;
+	public EnemyStats RMStats;
+
+	public EnemyStats GTStats;
+	public EnemyStats BTStats;
+	public EnemyStats RTStats;
+
+	public int spawnCount;
 	public float timeBetweenSpawns = 1;
 }
+
+[Serializable]
+public struct EnemyTypes {
+	public GameObject greenInfantry;
+	public GameObject blueInfantry;
+	public GameObject redInfantry;
+
+	public GameObject greenMech;
+	public GameObject blueMech;
+	public GameObject redMech;
+
+	public GameObject greenTank;
+	public GameObject blueTank;
+	public GameObject redTank;
+}
+
 public class WaveController : MonoBehaviour {
-	public GameObject enemyType;
+	public EnemyTypes enemyTypes;
 	public GameObject playerBase;
 	public float timeBetweenWaves = 5;
 	public List<Wave> waves = new List<Wave>();
@@ -32,7 +51,7 @@ public class WaveController : MonoBehaviour {
 
 	void Start() {
 		state = GameState.FindInScene();
-		timeUntilNextWave = timeBetweenWaves * 2;;
+		timeUntilNextWave = timeBetweenWaves * 2;
 	}
 
 	void Update() {
@@ -65,130 +84,66 @@ public class WaveController : MonoBehaviour {
 		}
 
 		// Wait for spawn
-		if (timeUntilNextSpawn >=  0) {
+		if (timeUntilNextSpawn >= 0) {
 			timeUntilNextSpawn -= Time.deltaTime;
 			UpdateTimerUI();
 			return;
 		}
 
-        //Actual spawn
-        int randEnemy = currentWaveNumber;
+		//Actual spawn
+		int randEnemy = currentWaveNumber;
 
-		//GameObject enemy = GameObject.Instantiate(enemyType);
-		//enemy.transform.position = gameObject.transform.position;
+		Vector2 look = path[0] - path[1];
+		float rotation = Mathf.Atan2(look.y, look.x) * Mathf.Rad2Deg + 90f;
 
-        if (randEnemy == 0) {
-            enemyType = GameObject.FindGameObjectWithTag("Green Infantry");
+		GameObject enemy;
+		EnemyAI ai;
+		if (randEnemy == 0) {
+			enemy = GameObject.Instantiate(enemyTypes.greenInfantry);
+			ai = enemy.GetComponent<GreenInfantryAI>();
+			ai.stats = currentWave.GIStats;
+		} else if (randEnemy == 1) {
+			enemy = GameObject.Instantiate(enemyTypes.blueInfantry);
+			ai = enemy.GetComponent<BlueInfantryAI>();
+			ai.stats = currentWave.BIStats;
+		} else if (randEnemy == 2) {
+			enemy = GameObject.Instantiate(enemyTypes.redInfantry);
+			ai = enemy.GetComponent<RedInfantryAI>();
+			ai.stats = currentWave.RIStats;
+		} else if (randEnemy == 3) {
+			enemy = GameObject.Instantiate(enemyTypes.greenMech);
+			ai = enemy.GetComponent<GreenMechAI>();
+			ai.stats = currentWave.GMStats;
 
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
+		} else if (randEnemy == 4) {
+			enemy = GameObject.Instantiate(enemyTypes.blueMech);
+			ai = enemy.GetComponent<BlueMechAI>();
+			ai.stats = currentWave.BMStats;
+		} else if (randEnemy == 5) {
+			enemy = GameObject.Instantiate(enemyTypes.redMech);
+			ai = enemy.GetComponent<RedMechAI>();
+			ai.stats = currentWave.RMStats;
+		} else if (randEnemy == 6) {
+			enemy = GameObject.Instantiate(enemyTypes.greenTank);
+			ai = enemy.GetComponent<GreenTankAI>();
+			ai.stats = currentWave.GTStats;
+		} else if (randEnemy == 7) {
+			enemy = GameObject.Instantiate(enemyTypes.blueTank);
+			ai = enemy.GetComponent<BlueTankAI>();
+			ai.stats = currentWave.BTStats;
+		} else {
+			enemy = GameObject.Instantiate(enemyTypes.redTank);
+			ai = enemy.GetComponent<RedTankAI>();
+			ai.stats = currentWave.RTStats;
+		}
+		enemy.transform.position = gameObject.transform.position;
+		foreach (Vector2 waypoint in path) {
+			ai.path.Enqueue(waypoint);
+		}
+		ai.rotation = rotation;
 
-            GreenInfantryAI ai = enemy.GetComponent<GreenInfantryAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.GIStats;
-        }
-        else if (randEnemy == 1) {
-            enemyType = GameObject.FindGameObjectWithTag("Blue Infantry");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            BlueInfantryAI ai = enemy.GetComponent<BlueInfantryAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.BIStats;
-        }
-        else if (randEnemy == 2) {
-            enemyType = GameObject.FindGameObjectWithTag("Red Infantry");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            RedInfantryAI ai = enemy.GetComponent<RedInfantryAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.RIStats;
-        }
-        else if (randEnemy == 3) {
-            enemyType = GameObject.FindGameObjectWithTag("Green Mech");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            GreenMechAI ai = enemy.GetComponent<GreenMechAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.GMStats;
-
-        }
-        else if (randEnemy == 4) {
-            enemyType = GameObject.FindGameObjectWithTag("Blue Mech");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            BlueMechAI ai = enemy.GetComponent<BlueMechAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.BMStats;
-        }
-        else if (randEnemy == 5) {
-            enemyType = GameObject.FindGameObjectWithTag("Red Mech");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            RedMechAI ai = enemy.GetComponent<RedMechAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.RMStats;
-        }
-        else if (randEnemy == 6) {
-            enemyType = GameObject.FindGameObjectWithTag("Green Tank");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            GreenTankAI ai = enemy.GetComponent<GreenTankAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.GTStats;
-        }
-        else if (randEnemy == 7) {
-            enemyType = GameObject.FindGameObjectWithTag("Blue Tank");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            BlueTankAI ai = enemy.GetComponent<BlueTankAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.BTStats;
-        }
-        else if (randEnemy == 8) {
-            enemyType = GameObject.FindGameObjectWithTag("Red Tank");
-
-            GameObject enemy = GameObject.Instantiate(enemyType);
-            enemy.transform.position = gameObject.transform.position;
-
-            RedTankAI ai = enemy.GetComponent<RedTankAI>();
-            foreach (Vector2 waypoint in path) {
-                ai.path.Enqueue(waypoint);
-            }
-            ai.stats = currentWave.RTStats;
-        }
-
-        // Next spawn
-        timeUntilNextSpawn += currentWave.timeBetweenSpawns;
+		// Next spawn
+		timeUntilNextSpawn += currentWave.timeBetweenSpawns;
 		UpdateTimerUI();
 		currentSpawnNumber++;
 	}
