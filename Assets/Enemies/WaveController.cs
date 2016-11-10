@@ -46,10 +46,17 @@ public class WaveController : MonoBehaviour {
 	private float timeUntilNextWave = 0;
 	private GameState state;
 
+	public void nextWave() {
+		timeUntilNextWave = 0;
+		state.GetUIController().hideNextWaveButton();
+	}
+
 	void Start() {
 		state = GameState.FindInScene();
-		timeUntilNextWave = timeBetweenWaves * 2;
+//		timeUntilNextWave = timeBetweenWaves * 3;
+		timeUntilNextWave = float.PositiveInfinity;
 		timeBetweenSpawns = 20f / (float)waves[0].spawnCount;
+		state.GetUIController().showNextWaveButton();
 	}
 
 	void Update() {
@@ -66,6 +73,7 @@ public class WaveController : MonoBehaviour {
 		}
 
 		Wave currentWave = waves[currentWaveNumber];
+		state.GetUIController().hideNextWaveButton();
 
 		// Check to see if wave is done
 		if (currentSpawnNumber >= currentWave.spawnCount) {
@@ -76,6 +84,7 @@ public class WaveController : MonoBehaviour {
 			}
 			currentSpawnNumber = 0;
 			Wave nextWave = waves[currentWaveNumber];
+			state.GetUIController().showNextWaveButton();
 			timeUntilNextWave = timeBetweenWaves;
 			timeBetweenSpawns = 20f / (float)nextWave.spawnCount;
 			timeUntilNextSpawn = 0;

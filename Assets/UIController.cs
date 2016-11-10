@@ -8,12 +8,21 @@ public class UIController : MonoBehaviour {
     public Text moneyUI;
     public Text gameOverUI;
     public Text towerStatUI;
+	public Button nextWaveButton;
 
     void Start() {
     }
 
     void Update() {
     }
+
+	public void showNextWaveButton() {
+		nextWaveButton.gameObject.SetActive(true);
+	}
+
+	public void hideNextWaveButton() {
+		nextWaveButton.gameObject.SetActive(false);
+	}
 
     public void hideWinText() {
         gameOverUI.gameObject.SetActive(false);
@@ -29,7 +38,12 @@ public class UIController : MonoBehaviour {
     }
 
     public void UpdateTimeUntilWave(float timeBeforeWave) {
-        waveUI.text = "Time until next wave: " + Mathf.FloorToInt(timeBeforeWave) + "s";
+		if (float.IsInfinity(timeBeforeWave)) {
+			waveUI.text = "Click 'Next Wave' to start next wave";
+		} else {
+			waveUI.text = "Time until next wave: " + Mathf.FloorToInt(timeBeforeWave) + "s";
+		}
+        
     }
 
     public void UpdateSpawnsRemaining(int spawnCount) {
