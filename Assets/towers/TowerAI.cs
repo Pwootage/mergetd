@@ -19,7 +19,7 @@ public class TowerAI : MonoBehaviour {
 	    if (attackTimer <= 0) {
             TowerStats finalStats = statModifiers.Aggregate((TowerStats)stats, (s, m) => m.applyModifier(s));
 
-            Collider2D[] objects = Physics2D.OverlapCircleAll(gameObject.transform.position, stats.getRange());
+			Collider2D[] objects = Physics2D.OverlapCircleAll(gameObject.transform.position, finalStats.getRange());
 	        foreach (Collider2D obj in objects) {
 	            EnemyAI enemy = obj.gameObject.GetComponent<EnemyAI>();
 	            if (enemy != null) {

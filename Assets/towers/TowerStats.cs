@@ -66,6 +66,7 @@ public class TowerStatsBasic : TowerStats {
         this.damage = toCopy.getDamage();
         this.pierceCount = toCopy.getPierceCount();
         this.hitSameTargetMultipleTimes = toCopy.canHitSameTargetMultipleTimes();
+		this.projectileSpeed = toCopy.getProjectileSpeed();
         this.splashRadius = toCopy.getSplashRadius();
         this.splashDamageMultiplier = toCopy.getSplashDamageMultiplier();
         this.homingStrength = toCopy.getHomingStrength();
