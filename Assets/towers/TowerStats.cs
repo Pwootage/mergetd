@@ -173,3 +173,45 @@ public class PercentAttackSpeedBoost : TowerStatModifier {
         return ret;
     }
 }
+
+public class TilePercentAttackDamageBoost: TowerStatModifier {
+	private readonly float amount;
+
+	public TilePercentAttackDamageBoost(float amount) {
+		this.amount = amount;
+	}
+
+	public override TowerStats applyModifier(TowerStats toModify) {
+		TowerStatsBasic ret = new TowerStatsBasic(toModify);
+		ret.damage *= amount;
+		return ret;
+	}
+}
+
+public class TilePercentAttackSpeedBoost: TowerStatModifier {
+	private readonly float amount;
+
+	public TilePercentAttackSpeedBoost(float amount) {
+		this.amount = amount;
+	}
+
+	public override TowerStats applyModifier(TowerStats toModify) {
+		TowerStatsBasic ret = new TowerStatsBasic(toModify);
+		ret.rateOfFire *= amount;
+		return ret;
+	}
+}
+
+public class TilePercentAttackRangeBoost: TowerStatModifier {
+	private readonly float amount;
+
+	public TilePercentAttackRangeBoost(float amount) {
+		this.amount = amount;
+	}
+
+	public override TowerStats applyModifier(TowerStats toModify) {
+		TowerStatsBasic ret = new TowerStatsBasic(toModify);
+		ret.range *= amount;
+		return ret;
+	}
+}

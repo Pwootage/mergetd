@@ -1,13 +1,25 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
+[Serializable]
+public struct SpecialFloorTileSprites {
+	public  Sprite attackUp;
+	public  Sprite rangeUp;
+	public  Sprite speedUp;
+}
+
+
+
 public class FloorController : MonoBehaviour {
+	public SpecialFloorTileSprites specialSprites;
 	public Sprite[] floorTiles = { };
 	public GameObject floorTileObject;
 	public GameObject playerBase;
 	public GameObject enemySpawner;
 	private GameObject[] generatedTiles;
+	private GameObject[] generatedSpecialTiles;
     private GameState state;
 
 	void Start() {
@@ -22,19 +34,20 @@ public class FloorController : MonoBehaviour {
 		clickCollider.size = new Vector2(state.map.width, state.map.height);
 
 		//Pick tile types
-		Random.InitState((int)System.DateTime.Now.Ticks);
-		int pathTileType = Random.Range(0, floorTiles.Length);
+		UnityEngine.Random.InitState((int)System.DateTime.Now.Ticks);
+		int pathTileType = UnityEngine.Random.Range(0, floorTiles.Length);
 		int borderTileType;
 		do {
-			borderTileType = Random.Range(0, floorTiles.Length);
+			borderTileType = UnityEngine.Random.Range(0, floorTiles.Length);
 		} while (borderTileType == pathTileType);
 		int otherTileType;
 		do {
-			otherTileType = Random.Range(0, floorTiles.Length);
+			otherTileType = UnityEngine.Random.Range(0, floorTiles.Length);
 		} while (otherTileType == pathTileType || otherTileType == borderTileType);
 
 		//Create tiles
 		generatedTiles = new GameObject[state.map.width * state.map.height];
+		generatedSpecialTiles = new GameObject[state.map.width * state.map.height];
 		for (int x = 0; x < state.map.width; x++) {
 			for (int y = 0; y < state.map.height; y++) {
 				int ind = state.map.getTileIndex(x, y);
@@ -57,6 +70,31 @@ public class FloorController : MonoBehaviour {
 				tile.name = "Tile " + x + ", " + y;
 				generatedTiles[ind] = tile;
 				tile.transform.position = transform.position + new Vector3(x, y, 1);
+
+
+
+				if (state.map.getSpecialEffect(x, y) != SpecialTileEffect.NONE) {
+					GameObject specialTile = GameObject.Instantiate(floorTileObject);
+					FloorTile specialFloorTile = specialTile.GetComponent<FloorTile>();
+					specialTile.name = "Special Tile " + x + ", " + y;
+					generatedSpecialTiles[ind] = specialTile;
+					specialTile.transform.position = transform.position + new Vector3(x, y, -3);
+
+					switch (state.map.getSpecialEffect(x, y)) {
+						case SpecialTileEffect.ATTACK_UP:
+							specialFloorTile.SetSprite(specialSprites.attackUp);
+							break;
+						case SpecialTileEffect.RANGE_UP:
+							specialFloorTile.SetSprite(specialSprites.rangeUp);
+							break;
+						case SpecialTileEffect.SPEED_UP:
+							specialFloorTile.SetSprite(specialSprites.speedUp);
+							break;
+						case SpecialTileEffect.NONE:
+						default:
+							break;
+					}
+				}
 			}
 		}
 

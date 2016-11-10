@@ -30,7 +30,7 @@ public class TowerAI : MonoBehaviour {
                     projectile.Stats = finalStats;
                     projectile.Target = obj.gameObject;
 
-	                attackTimer = stats.getRateOfFire();
+					attackTimer = finalStats.getRateOfFire();
 					SetTurretLookAt(obj.gameObject);
 	                break;
 	            }

@@ -55,6 +55,7 @@ public class MapLoader {
 		path.Reverse();
 
 		GameMap.TileType[] tiles = new GameMap.TileType[width * height];
+		SpecialTileEffect[] specialEffects = new SpecialTileEffect[width * height];
 		String[] mapDataLines = mapData.text.Split('\n');
 		for (int y = 0; y < width; y++) {
 			for (int x = 0; x < width; x++) {
@@ -65,14 +66,32 @@ public class MapLoader {
 				} else if (tileChar == '#') {
 					type = GameMap.TileType.PATH;
 				}
-
-				tiles[GameMap.getTileIndex(x, y, height)] = type;
+				int ind = GameMap.getTileIndex(x, y, height);
+				tiles[ind] = type;
+				specialEffects[ind] = SpecialTileEffect.NONE;
 			}
+		}
+		for (int specialTile = 0; specialTile < 15; specialTile++) {
+			int x = UnityEngine.Random.Range(0, width);
+			int y = UnityEngine.Random.Range(0, height);
+			int ind = GameMap.getTileIndex(x, y, height);
+			if (specialEffects[ind] != SpecialTileEffect.NONE || tiles[ind] == GameMap.TileType.PATH) {
+				specialTile--;
+				continue;
+			}
+			int rng = UnityEngine.Random.Range(0, 3);
+			if (rng == 0) {
+				specialEffects[ind] = SpecialTileEffect.ATTACK_UP;
+			} else if (rng == 1) {
+				specialEffects[ind] = SpecialTileEffect.RANGE_UP;
+			} else {
+				specialEffects[ind] = SpecialTileEffect.SPEED_UP;
+			} 
 		}
 
 		//TODO: flip/spin
 
-		return new GameMap(tiles, width, height, pointa, pointb, path);
+		return new GameMap(tiles, specialEffects, width, height, pointa, pointb, path);
 	}
 
 	private static Vector2 StringToVector(String str) {

@@ -54,8 +54,23 @@ public class TowerBuilder : MonoBehaviour {
 
 			GameObject newTower = GameObject.Instantiate(this.tower);
 			newTower.transform.position = new Vector3(x, y);
-
 			state.map.setTower(x, y, newTower);
+
+			TowerAI newTowerAI = newTower.GetComponent<TowerAI>();
+			switch (state.map.getSpecialEffect(x, y)) {
+				case SpecialTileEffect.ATTACK_UP:
+					newTowerAI.statModifiers.Add(new TilePercentAttackDamageBoost(1.5f));
+					break;
+				case SpecialTileEffect.RANGE_UP:
+					newTowerAI.statModifiers.Add(new TilePercentAttackRangeBoost(1.5f));
+					break;
+				case SpecialTileEffect.SPEED_UP:
+					newTowerAI.statModifiers.Add(new TilePercentAttackSpeedBoost(0.75f));
+					break;
+				case SpecialTileEffect.NONE:
+				default:
+					break;
+			}
 		}
 	}
 
