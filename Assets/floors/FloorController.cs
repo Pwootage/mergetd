@@ -38,7 +38,7 @@ public class FloorController : MonoBehaviour {
 		for (int x = 0; x < state.map.width; x++) {
 			for (int y = 0; y < state.map.height; y++) {
 				int ind = state.map.getTileIndex(x, y);
-				GameMap.TileType type = state.map.tiles[ind];
+				GameMap.TileType type = state.map.getTile(x, y);
 				GameObject tile = GameObject.Instantiate(floorTileObject);
 				FloorTile floorTile = tile.GetComponent<FloorTile>();
 

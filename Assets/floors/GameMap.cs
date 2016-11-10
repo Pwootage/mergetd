@@ -9,8 +9,8 @@ public class GameMap {
 		OTHER
 	}
 
-	public TileType[] tiles;
-	public GameObject[] towers;
+	private TileType[] tiles;
+	private GameObject[] towers;
 	public int width;
 	public int height;
 	public Vector2 pointa;
@@ -33,6 +33,18 @@ public class GameMap {
 
 	public bool isBuildable(int x, int y) {
 		return tiles[getTileIndex(x, y)] != TileType.PATH;
+	}
+
+	public TileType getTile(int x, int y) {
+		return tiles[getTileIndex(x, y)];
+	}
+
+	public GameObject getTower(int x, int y) {
+		return towers[getTileIndex(x, y)];
+	}
+
+	public void setTower(int x, int y, GameObject tower) {
+		towers[getTileIndex(x, y)] = tower;
 	}
 
 	public static int getTileIndex(int x, int y, int height) {

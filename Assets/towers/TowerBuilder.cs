@@ -40,8 +40,22 @@ public class TowerBuilder : MonoBehaviour {
 			Vector3 loc = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			int x = Mathf.RoundToInt(loc.x);
 			int y = Mathf.RoundToInt(loc.y);
+
+			if (!state.map.isBuildable(x, y)) {
+				return;
+			}
+
+			GameObject oldTower = state.map.getTower(x, y);
+			if (oldTower != null) {
+				TowerAI oldTowerAI = oldTower.GetComponent<TowerAI>();
+				state.GiveMoney(oldTowerAI.stats.cost / 2);
+				Destroy(oldTower);
+			}
+
 			GameObject newTower = GameObject.Instantiate(this.tower);
 			newTower.transform.position = new Vector3(x, y);
+
+			state.map.setTower(x, y, newTower);
 		}
 	}
 

@@ -21,16 +21,14 @@ public class BuildIndicator : MonoBehaviour {
 		int x = Mathf.RoundToInt(loc.x);
 		int y = Mathf.RoundToInt(loc.y);
 		transform.position = new Vector3(x, y, -6);
-		int tile = state.map.getTileIndex(x, y);
 		if (x < 0 || x >= state.map.width || y < 0 || y >= state.map.height) {
 			spriteRenderer.color = invisibleColor;
 		} else if (!state.map.isBuildable(x, y)) {
 			spriteRenderer.color = badColor;
-		} else if (state.map.towers[tile] != null) {
+		} else if (state.map.getTower(x, y) != null) {
 			spriteRenderer.color = warnColor;
 		} else {
 			spriteRenderer.color = okColor;
 		}
-			
 	}
 }
