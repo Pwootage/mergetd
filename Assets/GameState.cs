@@ -9,7 +9,7 @@ public class GameState : MonoBehaviour {
     public List<GameObject> towers = new List<GameObject>();
     public GameMap map;
     private int lives;
-	private int money;
+	private float money;
 	private UIController uiController;
 	private bool spawning;
 
@@ -38,11 +38,11 @@ public class GameState : MonoBehaviour {
 		return uiController;
 	}
 
-	public int getMoney() {
+	public float getMoney() {
 		return money;
 	}
 
-	public void GiveMoney(int moneyValue) {
+	public void GiveMoney(float moneyValue) {
 		this.money += moneyValue;
 		uiController.UpdateMoneyLabel(this.money);
 	}
@@ -50,7 +50,7 @@ public class GameState : MonoBehaviour {
 	/**
 	 * Does not currently check to make sure you have enough money. Make sure you do this first!
 	 */
-	public void spendMoney(int money) {
+	public void spendMoney(float money) {
 		this.money -= money;
 		uiController.UpdateMoneyLabel(this.money);
 	}

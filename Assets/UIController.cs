@@ -19,8 +19,8 @@ public class UIController : MonoBehaviour {
         gameOverUI.gameObject.SetActive(false);
     }
 
-    public void UpdateMoneyLabel(int money) {
-        moneyUI.text = "Money: " + money;
+    public void UpdateMoneyLabel(float money) {
+		moneyUI.text = "Money: " + (int)money;
     }
 
     public void ShowWinUI(string text) {

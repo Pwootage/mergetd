@@ -7,7 +7,11 @@ using System.Linq;
 public class EnemyStats {
 	public float health = 20;
 	public float speed = 1;
-	public int value = 3;
+	public float value = 3;
+
+	public EnemyStats Clone(){
+		return (EnemyStats)this.MemberwiseClone();
+	}
 }
 
 [Serializable]

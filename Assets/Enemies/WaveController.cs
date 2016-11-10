@@ -5,35 +5,31 @@ using System;
 
 [Serializable]
 public class Wave {
-	public EnemyStats GIStats;
-	public EnemyStats BIStats;
-	public EnemyStats RIStats;
-
-	public EnemyStats GMStats;
-	public EnemyStats BMStats;
-	public EnemyStats RMStats;
-
-	public EnemyStats GTStats;
-	public EnemyStats BTStats;
-	public EnemyStats RTStats;
-
 	public int spawnCount;
-	public float timeBetweenSpawns = 1;
 }
 
 [Serializable]
 public struct EnemyTypes {
 	public GameObject greenInfantry;
+	public EnemyStats greenInfantryStats;
 	public GameObject blueInfantry;
+	public EnemyStats blueInfantryStats;
 	public GameObject redInfantry;
+	public EnemyStats redInfantryStats;
 
 	public GameObject greenMech;
+	public EnemyStats greenMechStats;
 	public GameObject blueMech;
+	public EnemyStats blueMechStats;
 	public GameObject redMech;
+	public EnemyStats redMechStats;
 
 	public GameObject greenTank;
+	public EnemyStats greenTankStats;
 	public GameObject blueTank;
+	public EnemyStats blueTankStats;
 	public GameObject redTank;
+	public EnemyStats redTankStats;
 }
 
 public class WaveController : MonoBehaviour {
@@ -46,12 +42,14 @@ public class WaveController : MonoBehaviour {
 	private int currentWaveNumber = 0;
 	private int currentSpawnNumber = 0;
 	private float timeUntilNextSpawn = 0;
+	private float timeBetweenSpawns = 0;
 	private float timeUntilNextWave = 0;
 	private GameState state;
 
 	void Start() {
 		state = GameState.FindInScene();
 		timeUntilNextWave = timeBetweenWaves * 2;
+		timeBetweenSpawns = 20f / (float)waves[0].spawnCount;
 	}
 
 	void Update() {
@@ -59,15 +57,15 @@ public class WaveController : MonoBehaviour {
 		if (currentWaveNumber >= waves.Count) {
 			return;
 		}
-
-		Wave currentWave = waves[currentWaveNumber];
-
+			
 		// Wait for next wave
 		if (timeUntilNextWave >= 0) {
 			timeUntilNextWave -= Time.deltaTime;
 			UpdateTimerUI();
 			return;
 		}
+
+		Wave currentWave = waves[currentWaveNumber];
 
 		// Check to see if wave is done
 		if (currentSpawnNumber >= currentWave.spawnCount) {
@@ -79,7 +77,8 @@ public class WaveController : MonoBehaviour {
 			currentSpawnNumber = 0;
 			Wave nextWave = waves[currentWaveNumber];
 			timeUntilNextWave = timeBetweenWaves;
-			timeUntilNextSpawn = nextWave.timeBetweenSpawns;
+			timeBetweenSpawns = 20f / (float)nextWave.spawnCount;
+			timeUntilNextSpawn = 0;
 			return;
 		}
 
@@ -91,7 +90,7 @@ public class WaveController : MonoBehaviour {
 		}
 
 		//Actual spawn
-		int randEnemy = currentWaveNumber;
+		int randEnemy = UnityEngine.Random.Range(0, 8);
 
 		Vector2 look = path[0] - path[1];
 		float rotation = Mathf.Atan2(look.y, look.x) * Mathf.Rad2Deg + 90f;
@@ -101,49 +100,53 @@ public class WaveController : MonoBehaviour {
 		if (randEnemy == 0) {
 			enemy = GameObject.Instantiate(enemyTypes.greenInfantry);
 			ai = enemy.GetComponent<GreenInfantryAI>();
-			ai.stats = currentWave.GIStats;
+			ai.stats = enemyTypes.greenInfantryStats.Clone();
 		} else if (randEnemy == 1) {
 			enemy = GameObject.Instantiate(enemyTypes.blueInfantry);
 			ai = enemy.GetComponent<BlueInfantryAI>();
-			ai.stats = currentWave.BIStats;
+			ai.stats = enemyTypes.blueInfantryStats.Clone();
 		} else if (randEnemy == 2) {
 			enemy = GameObject.Instantiate(enemyTypes.redInfantry);
 			ai = enemy.GetComponent<RedInfantryAI>();
-			ai.stats = currentWave.RIStats;
+			ai.stats = enemyTypes.redInfantryStats.Clone();
 		} else if (randEnemy == 3) {
 			enemy = GameObject.Instantiate(enemyTypes.greenMech);
 			ai = enemy.GetComponent<GreenMechAI>();
-			ai.stats = currentWave.GMStats;
-
+			ai.stats = enemyTypes.greenMechStats.Clone();
 		} else if (randEnemy == 4) {
 			enemy = GameObject.Instantiate(enemyTypes.blueMech);
 			ai = enemy.GetComponent<BlueMechAI>();
-			ai.stats = currentWave.BMStats;
+			ai.stats = enemyTypes.blueMechStats.Clone();
 		} else if (randEnemy == 5) {
 			enemy = GameObject.Instantiate(enemyTypes.redMech);
 			ai = enemy.GetComponent<RedMechAI>();
-			ai.stats = currentWave.RMStats;
+			ai.stats = enemyTypes.redMechStats.Clone();
 		} else if (randEnemy == 6) {
 			enemy = GameObject.Instantiate(enemyTypes.greenTank);
 			ai = enemy.GetComponent<GreenTankAI>();
-			ai.stats = currentWave.GTStats;
+			ai.stats = enemyTypes.greenTankStats.Clone();
 		} else if (randEnemy == 7) {
 			enemy = GameObject.Instantiate(enemyTypes.blueTank);
 			ai = enemy.GetComponent<BlueTankAI>();
-			ai.stats = currentWave.BTStats;
+			ai.stats = enemyTypes.blueTankStats.Clone();
 		} else {
 			enemy = GameObject.Instantiate(enemyTypes.redTank);
 			ai = enemy.GetComponent<RedTankAI>();
-			ai.stats = currentWave.RTStats;
+			ai.stats = enemyTypes.greenTankStats.Clone();
 		}
 		enemy.transform.position = gameObject.transform.position;
 		foreach (Vector2 waypoint in path) {
 			ai.path.Enqueue(waypoint);
 		}
 		ai.rotation = rotation;
+		float waveEnemyMultiplier = (10f / (float)currentWave.spawnCount);
+		float difficultyFactor = (1f + (float)currentWaveNumber * 0.5f) * waveEnemyMultiplier;
+		ai.stats.health *= difficultyFactor;
+		ai.stats.value *= waveEnemyMultiplier; //Doesn't scale with wave - towers all cost the same amount
+		//ai.stats.value = (int)Math.Floor((float)ai.stats.value * difficultyFactor);
 
 		// Next spawn
-		timeUntilNextSpawn += currentWave.timeBetweenSpawns;
+		timeUntilNextSpawn += timeBetweenSpawns;
 		UpdateTimerUI();
 		currentSpawnNumber++;
 	}
