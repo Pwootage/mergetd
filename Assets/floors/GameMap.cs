@@ -10,6 +10,7 @@ public class GameMap {
 	}
 
 	public TileType[] tiles;
+	public GameObject[] towers;
 	public int width;
 	public int height;
 	public Vector2 pointa;
@@ -18,6 +19,7 @@ public class GameMap {
 
 	public GameMap(TileType[] tiles, int width, int height, Vector2 pointa, Vector2 pointb, List<Vector2> path) {
 		this.tiles = tiles;
+		towers = new GameObject[tiles.Length];
 		this.width = width;
 		this.height = height;
 		this.pointa = pointa;
@@ -27,6 +29,10 @@ public class GameMap {
 
 	public int getTileIndex(int x, int y) {
 		return y * height + x;
+	}
+
+	public bool isBuildable(int x, int y) {
+		return tiles[getTileIndex(x, y)] != TileType.PATH;
 	}
 
 	public static int getTileIndex(int x, int y, int height) {
