@@ -35,7 +35,6 @@ public class TowerBuilder : MonoBehaviour {
 	void OnMouseDown() {
 	    TowerAI tower = this.tower.GetComponent<TowerAI>();
 		if (state.getMoney() >= tower.stats.cost) {
-			state.spendMoney(tower.stats.cost);
 
 			Vector3 loc = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			int x = Mathf.RoundToInt(loc.x);
@@ -44,6 +43,8 @@ public class TowerBuilder : MonoBehaviour {
 			if (!state.map.isBuildable(x, y)) {
 				return;
 			}
+
+			state.spendMoney(tower.stats.cost);
 
 			GameObject oldTower = state.map.getTower(x, y);
 			if (oldTower != null) {

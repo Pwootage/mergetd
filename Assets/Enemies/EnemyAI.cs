@@ -74,6 +74,10 @@ public class EnemyAI : MonoBehaviour {
 		}
 	}
 
+	void OnDestroy() {
+		GameState.FindInScene().getAudioPlayer().playEnemyDie();
+	}
+
 	public void damage(float f) {
 		damageTaken += f;
 	}
