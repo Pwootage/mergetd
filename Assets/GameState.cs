@@ -28,6 +28,7 @@ public class GameState : MonoBehaviour {
 		uiController.UpdateMoneyLabel(money);
 		spawning = true;
 		audioPlayer = GetComponent<AudioPlayer>();
+		return GameObject.Find("GameController").GetComponent<GameState>();
 	}
 
 	void Update() {
