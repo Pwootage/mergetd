@@ -43,10 +43,10 @@ public class EnemyAI : MonoBehaviour {
 		// Process Effects
 		foreach (EnemyEffect effect in effects) {
 			effect.duration -= deltaTime;
-			this.damage(effect.damagePerSecond * deltaTime);
+			this.dotDamage(effect.damagePerSecond * deltaTime);
 		}
 		if (effects.Count() > 0) {
-			speed *= effects.Select(effect => effect.slowMultiplier).Min();
+			speed *= getSlowModifier(effects.Select(effect => effect.slowMultiplier).Min());
 		}
 		effects = effects.Where(effect => effect.duration > 0).ToList();
 
@@ -74,7 +74,19 @@ public class EnemyAI : MonoBehaviour {
 		}
 	}
 
-	public void damage(float f) {
+	void OnDestroy() {
+		GameState.FindInScene().getAudioPlayer().playEnemyDie();
+	}
+
+	virtual public float getSlowModifier(float originalModifier) {
+		return originalModifier;
+	}
+
+	virtual public void dotDamage(float f) {
+		damage(f);
+	}
+
+	virtual public void damage(float f) {
 		damageTaken += f;
 	}
 

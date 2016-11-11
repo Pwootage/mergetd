@@ -68,6 +68,7 @@ public class Projectile : MonoBehaviour {
     }
 
     public void OnDestroy() {
+		GameState.FindInScene().getAudioPlayer().playBulletDie();
         //TODO
         //If splash_damage > 0 create "explosion" in a circle around the projectile's current position with a radius of splash_radius
         //destroy the Projectile

@@ -33,6 +33,7 @@ public class TowerClickable : MonoBehaviour {
 
     public void OnClick() {
         builder.SelectTower(id);
+		state.getAudioPlayer().playSelectBlip();
     }
 
     public void UpdateText() {
