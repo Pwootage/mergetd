@@ -8,12 +8,14 @@ public class BuildIndicator : MonoBehaviour {
 	public Color badColor;
 	private SpriteRenderer spriteRenderer;
 	private GameState state;
+	private TowerBuilder builder;
 
 
 	void Start () {
 		this.state = GameState.FindInScene();
 		this.spriteRenderer = GetComponent<SpriteRenderer>();
 		this.spriteRenderer.color = invisibleColor;
+		builder = GameObject.Find("FloorController").GetComponent<TowerBuilder>();
 	}
 
 	void Update () {
@@ -24,6 +26,8 @@ public class BuildIndicator : MonoBehaviour {
 		if (x < 0 || x >= state.map.width || y < 0 || y >= state.map.height) {
 			spriteRenderer.color = invisibleColor;
 		} else if (!state.map.isBuildable(x, y)) {
+			spriteRenderer.color = badColor;
+		} else if (state.getMoney() < builder.tower.GetComponent<TowerAI>().stats.cost) {
 			spriteRenderer.color = badColor;
 		} else if (state.map.getTower(x, y) != null) {
 			spriteRenderer.color = warnColor;

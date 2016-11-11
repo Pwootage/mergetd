@@ -149,7 +149,7 @@ public class WaveController : MonoBehaviour {
 		}
 		ai.rotation = rotation;
 		float waveEnemyMultiplier = (10f / (float)currentWave.spawnCount);
-		float difficultyFactor = (1f + (float)currentWaveNumber * 0.5f) * waveEnemyMultiplier;
+		float difficultyFactor = (1f + (float)currentWaveNumber * 0.8f) * waveEnemyMultiplier;
 		ai.stats.health *= difficultyFactor;
 		ai.stats.value *= waveEnemyMultiplier; //Doesn't scale with wave - towers all cost the same amount
 		//ai.stats.value = (int)Math.Floor((float)ai.stats.value * difficultyFactor);

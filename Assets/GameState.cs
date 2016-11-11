@@ -11,7 +11,7 @@ public class GameState : MonoBehaviour {
     private int lives;
 	private float money;
 	private UIController uiController;
-	private AudioPlayer audio;
+	private AudioPlayer audioPlayer;
 	private bool spawning;
 
 
@@ -27,7 +27,7 @@ public class GameState : MonoBehaviour {
 		uiController.UpdateLivesUI(lives, startLives);
 		uiController.UpdateMoneyLabel(money);
 		spawning = true;
-		audio = GetComponent<AudioPlayer>();
+		audioPlayer = GetComponent<AudioPlayer>();
 	}
 
 	void Update() {
@@ -41,7 +41,7 @@ public class GameState : MonoBehaviour {
 	}
 
 	public AudioPlayer getAudioPlayer() {
-		return audio;
+		return audioPlayer;
 	}
 
 	public float getMoney() {
