@@ -14,6 +14,7 @@ public class TowerBuilder : MonoBehaviour {
 
 	void Start() {
 		state = GameState.FindInScene();
+		GameObject holder = GameObject.Find("BuilderHolder").gameObject;
 	    for (int i = 0; i < state.towerCount; i++) {
 	        GameObject obj = Instantiate(towerChoiceClickablePrototype);
 	        TowerClickable clickable = obj.GetComponent<TowerClickable>();
@@ -21,7 +22,7 @@ public class TowerBuilder : MonoBehaviour {
 	        clickable.id = i;
 
 	        RectTransform rectTransform = obj.GetComponent<RectTransform>();
-            rectTransform.SetParent(uiObject.transform);
+			rectTransform.SetParent(holder.transform);
             rectTransform.anchoredPosition = new Vector3(-15, i * 35);
 	        towerChoiceClickables.Add(obj);
 	    }
@@ -33,6 +34,9 @@ public class TowerBuilder : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
+		if (state.isSpawningPaused()) {
+			return;
+		}
 	    TowerAI tower = this.tower.GetComponent<TowerAI>();
 		if (state.getMoney() >= tower.stats.cost) {
 
@@ -80,7 +84,7 @@ public class TowerBuilder : MonoBehaviour {
             obj.GetComponent<TowerClickable>().UpdateText();
         }
         tower = state.towers[id];
-        TowerStats towerStats = tower.GetComponent<TowerAI>().stats;
+		TowerStats towerStats = tower.GetComponent<TowerAI>().getFinalStats();
         state.GetUIController().updateStatView(id, towerStats);
     }
 }

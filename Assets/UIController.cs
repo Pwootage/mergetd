@@ -3,14 +3,17 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour {
+	public GameState state;
     public Text livesUI;
     public Text waveUI;
     public Text moneyUI;
     public Text gameOverUI;
     public Text towerStatUI;
 	public Button nextWaveButton;
+	public GameObject PickerUI;
 
     void Start() {
+		state = GameState.FindInScene();
     }
 
     void Update() {
@@ -69,4 +72,20 @@ public class UIController : MonoBehaviour {
 
         towerStatUI.text = text;
     }
+
+	public void showPicker() {
+		if (state == null) {
+			state = GameState.FindInScene();
+		}
+		state.setSpawningPaused(true);
+		PickerUI.SetActive(true);
+	}
+
+	public void hidePicker() {
+		if (state == null) {
+			state = GameState.FindInScene();
+		}
+		state.setSpawningPaused(false);
+		PickerUI.SetActive(false);
+	}
 }

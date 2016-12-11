@@ -71,7 +71,7 @@ public class TowerStatsBasic : TowerStats {
         this.splashDamageMultiplier = toCopy.getSplashDamageMultiplier();
         this.homingStrength = toCopy.getHomingStrength();
 		this.effects = new List<EnemyEffect>();
-		foreach (EnemyEffect effect in effects) {
+		foreach (EnemyEffect effect in toCopy.getEffects()) {
 			this.effects.Add(effect.clone());
 		}
     }
@@ -127,6 +127,7 @@ public class TowerStatsBasic : TowerStats {
 
 public abstract class TowerStatModifier {
     public abstract TowerStats applyModifier(TowerStats toModify);
+	public abstract string getDescription();
 }
 
 public class FlatAttackDamageBoost: TowerStatModifier {
@@ -139,9 +140,17 @@ public class FlatAttackDamageBoost: TowerStatModifier {
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
         ret.damage += amount;
-        ret.cost += Mathf.CeilToInt(amount * 5);
+		ret.cost += getCost();
         return ret;
     }
+
+	public int getCost() {
+		return Mathf.CeilToInt(amount * 5);
+	}
+
+	public override string getDescription() {
+		return "+" + amount + " damage, +" + getCost() + " cost";
+	}
 }
 
 public class FlatRangeBoost : TowerStatModifier {
@@ -154,9 +163,17 @@ public class FlatRangeBoost : TowerStatModifier {
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
         ret.range += amount;
-        ret.cost += Mathf.CeilToInt(amount * 20);
+		ret.cost += getCost();
         return ret;
     }
+		
+	public int getCost() {
+		return Mathf.CeilToInt(amount * 20);
+	}
+
+	public override string getDescription() {
+		return "+" + amount + " range, +" + getCost() + " cost";
+	}
 }
 
 
@@ -170,9 +187,17 @@ public class PercentAttackSpeedBoost : TowerStatModifier {
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
         ret.rateOfFire *= amount;
-        ret.cost += Mathf.CeilToInt((1 - amount) * 20);
+		ret.cost += getCost();
         return ret;
-    }
+	}
+
+	public int getCost() {
+		return Mathf.CeilToInt((1 - amount) * 20);
+	}
+
+	public override string getDescription() {
+		return "+" + (amount * 100) + "% attack speed, +" + getCost() + " cost";
+	}
 }
 
 public class TilePercentAttackDamageBoost: TowerStatModifier {
@@ -186,6 +211,10 @@ public class TilePercentAttackDamageBoost: TowerStatModifier {
 		TowerStatsBasic ret = new TowerStatsBasic(toModify);
 		ret.damage *= amount;
 		return ret;
+	}
+		
+	public override string getDescription() {
+		return "Tile Stat Boost";
 	}
 }
 
@@ -201,6 +230,10 @@ public class TilePercentAttackSpeedBoost: TowerStatModifier {
 		ret.rateOfFire *= amount;
 		return ret;
 	}
+
+	public override string getDescription() {
+		return "Tile Stat Boost";
+	}
 }
 
 public class TilePercentAttackRangeBoost: TowerStatModifier {
@@ -214,5 +247,9 @@ public class TilePercentAttackRangeBoost: TowerStatModifier {
 		TowerStatsBasic ret = new TowerStatsBasic(toModify);
 		ret.range *= amount;
 		return ret;
+	}
+
+	public override string getDescription() {
+		return "Tile Stat Boost";
 	}
 }

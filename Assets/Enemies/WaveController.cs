@@ -60,6 +60,11 @@ public class WaveController : MonoBehaviour {
 	}
 
 	void Update() {
+		//Don't progress if paused (i.e. "Pick tower" dialog)
+		if (state.isSpawningPaused()) {
+			return;
+		}
+
 		//Done with all waves
 		if (currentWaveNumber >= waves.Count) {
 			return;

@@ -13,6 +13,7 @@ public class GameState : MonoBehaviour {
 	private UIController uiController;
 	private AudioPlayer audioPlayer;
 	private bool spawning;
+	private bool pauseSpawning = false;
 
 
 	public static GameState FindInScene() {
@@ -26,6 +27,7 @@ public class GameState : MonoBehaviour {
 		uiController.hideWinText();
 		uiController.UpdateLivesUI(lives, startLives);
 		uiController.UpdateMoneyLabel(money);
+		uiController.showPicker();
 		spawning = true;
 		audioPlayer = GetComponent<AudioPlayer>();
 	}
@@ -75,5 +77,13 @@ public class GameState : MonoBehaviour {
 			uiController.ShowWinUI("You died!");
 			GameObject.Find("base").SetActive(false);
 		}
+	}
+
+	public void setSpawningPaused(bool paused) {
+		pauseSpawning = paused;
+	}
+
+	public bool isSpawningPaused() {
+		return pauseSpawning;
 	}
 }

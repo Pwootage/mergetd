@@ -17,7 +17,7 @@ public class TowerAI : MonoBehaviour {
 	
 	void Update () {
 	    if (attackTimer <= 0) {
-            TowerStats finalStats = statModifiers.Aggregate((TowerStats)stats, (s, m) => m.applyModifier(s));
+			TowerStats finalStats = getFinalStats();
 
 			Collider2D[] objects = Physics2D.OverlapCircleAll(gameObject.transform.position, finalStats.getRange());
 	        foreach (Collider2D obj in objects) {
@@ -44,5 +44,9 @@ public class TowerAI : MonoBehaviour {
 		Vector3 look = transform.position - obj.transform.position;
 		float rot = Mathf.Atan2(look.y, look.x) * Mathf.Rad2Deg + 90f;
 		turret.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, rot));
+	}
+
+	public TowerStats getFinalStats() {
+		return statModifiers.Aggregate((TowerStats)stats, (s, m) => m.applyModifier(s));
 	}
 }
