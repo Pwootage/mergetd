@@ -79,6 +79,7 @@ public class UIController : MonoBehaviour {
 		}
 		state.setSpawningPaused(true);
 		PickerUI.SetActive(true);
+		Time.timeScale = 0;
 	}
 
 	public void hidePicker() {
@@ -87,5 +88,6 @@ public class UIController : MonoBehaviour {
 		}
 		state.setSpawningPaused(false);
 		PickerUI.SetActive(false);
+		Time.timeScale = state.normalSpeed;
 	}
 }

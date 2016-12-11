@@ -37,9 +37,6 @@ public class PickerController : MonoBehaviour {
 				merge(toMerge);
 			});
 		}
-
-		setModifier(new FlatAttackDamageBoost(1));
-
 	}
 
 	void Update() {
@@ -47,7 +44,8 @@ public class PickerController : MonoBehaviour {
 	}
 
 	public void merge(int id) {
-		Debug.Log("Merging " + id);
+		state.towers[id].GetComponent<TowerAI>().statModifiers.Add(modifier);
+		state.GetUIController().hidePicker();
 	}
 
 	public void setModifier(TowerStatModifier modifier) {

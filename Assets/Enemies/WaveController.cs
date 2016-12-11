@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-[Serializable]
 public class Wave {
+	public Wave(int count) {
+		this.spawnCount = count;
+	}
+
 	public int spawnCount;
 }
 
@@ -36,7 +39,8 @@ public class WaveController : MonoBehaviour {
 	public EnemyTypes enemyTypes;
 	public GameObject playerBase;
 	public float timeBetweenWaves = 5;
-	public List<Wave> waves = new List<Wave>();
+	public int waveCount = 24;
+	private List<Wave> waves = new List<Wave>();
 	[HideInInspector]
 	public List<Vector2> path = new List<Vector2>();
 	private int currentWaveNumber = 0;
@@ -52,6 +56,16 @@ public class WaveController : MonoBehaviour {
 	}
 
 	void Start() {
+		for (int i = 0; i < waveCount; i++) {
+			if (i % 3 == 0) {
+				waves.Add(new Wave(10));
+			} else if (i % 3 == 1) {
+				waves.Add(new Wave(20));
+			} else {
+				waves.Add(new Wave(3));
+			}
+		}
+
 		state = GameState.FindInScene();
 //		timeUntilNextWave = timeBetweenWaves * 3;
 		timeUntilNextWave = float.PositiveInfinity;
@@ -82,6 +96,7 @@ public class WaveController : MonoBehaviour {
 
 		// Check to see if wave is done
 		if (currentSpawnNumber >= currentWave.spawnCount) {
+			state.spawnModifier(currentWaveNumber);
 			currentWaveNumber++;
 			if (currentWaveNumber >= waves.Count) {
 				state.NotifySpawningIsDone();
@@ -89,7 +104,6 @@ public class WaveController : MonoBehaviour {
 			}
 			currentSpawnNumber = 0;
 			Wave nextWave = waves[currentWaveNumber];
-			state.GetUIController().showNextWaveButton();
 			timeUntilNextWave = timeBetweenWaves;
 			timeBetweenSpawns = 20f / (float)nextWave.spawnCount;
 			timeUntilNextSpawn = 0;

@@ -130,26 +130,26 @@ public abstract class TowerStatModifier {
 	public abstract string getDescription();
 }
 
-public class FlatAttackDamageBoost: TowerStatModifier {
+public class PercentAttackDamageBoost: TowerStatModifier {
     private readonly float amount;
 
-    public FlatAttackDamageBoost(float amount) {
+	public PercentAttackDamageBoost(float amount) {
         this.amount = amount;
     }
 
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
-        ret.damage += amount;
+		ret.damage *= (1f + amount);
 		ret.cost += getCost();
         return ret;
     }
 
 	public int getCost() {
-		return Mathf.CeilToInt(amount * 5);
+		return Mathf.CeilToInt(amount * 100f * 0.5f);
 	}
 
 	public override string getDescription() {
-		return "+" + amount + " damage, +" + getCost() + " cost";
+		return "+" + (amount * 100f) + "% damage, +" + getCost() + " cost";
 	}
 }
 
@@ -162,7 +162,7 @@ public class FlatRangeBoost : TowerStatModifier {
 
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
-        ret.range += amount;
+		ret.range += amount;
 		ret.cost += getCost();
         return ret;
     }
@@ -186,17 +186,35 @@ public class PercentAttackSpeedBoost : TowerStatModifier {
 
     public override TowerStats applyModifier(TowerStats toModify) {
         TowerStatsBasic ret = new TowerStatsBasic(toModify);
-        ret.rateOfFire *= amount;
+		ret.rateOfFire *= (1 - amount);
 		ret.cost += getCost();
         return ret;
 	}
 
 	public int getCost() {
-		return Mathf.CeilToInt((1 - amount) * 20);
+		return Mathf.CeilToInt(amount * 100f * 1f);
 	}
 
 	public override string getDescription() {
-		return "+" + (amount * 100) + "% attack speed, +" + getCost() + " cost";
+		return "+" + (amount * 100f) + "% attack speed, +" + getCost() + " cost";
+	}
+}
+
+public class CostReduction: TowerStatModifier {
+	private readonly int amount;
+
+	public CostReduction(int amount) {
+		this.amount = amount;
+	}
+
+	public override TowerStats applyModifier(TowerStats toModify) {
+		TowerStatsBasic ret = new TowerStatsBasic(toModify);
+		ret.cost -= amount;
+		return ret;
+	}
+
+	public override string getDescription() {
+		return -amount + " cost";
 	}
 }
 

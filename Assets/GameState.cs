@@ -11,9 +11,13 @@ public class GameState : MonoBehaviour {
     private int lives;
 	private float money;
 	private UIController uiController;
+	private PickerController pickerController;
 	private AudioPlayer audioPlayer;
 	private bool spawning;
+	private bool showModifierUI = false;
 	private bool pauseSpawning = false;
+	public float normalSpeed = 1;
+	public float fastSpeed = 3;
 
 
 	public static GameState FindInScene() {
@@ -27,14 +31,26 @@ public class GameState : MonoBehaviour {
 		uiController.hideWinText();
 		uiController.UpdateLivesUI(lives, startLives);
 		uiController.UpdateMoneyLabel(money);
-		uiController.showPicker();
+		pickerController = PickerController.FindInScene();
+		uiController.hidePicker();
 		spawning = true;
 		audioPlayer = GetComponent<AudioPlayer>();
+		//spawnModifier(1);
 	}
 
 	void Update() {
+		if (showModifierUI /* && GameObject.FindGameObjectsWithTag("Enemy").Length == 0*/ ) {
+			uiController.showNextWaveButton();
+			uiController.showPicker();
+			showModifierUI = false;
+		}
 		if (!spawning && GameObject.FindGameObjectsWithTag("Enemy").Length == 0) {
 			uiController.ShowWinUI("You win!");
+		}
+		if (Input.GetKey("f")) {
+			Time.timeScale = fastSpeed;
+		} else {
+			Time.timeScale = normalSpeed;
 		}
 	}
 
@@ -85,5 +101,32 @@ public class GameState : MonoBehaviour {
 
 	public bool isSpawningPaused() {
 		return pauseSpawning;
+	}
+
+	public void spawnModifier(int wave) {
+		TowerStatModifier modifier = null;
+		var type = Random.Range(0, 4);
+		float strength = Random.Range(0.7f, 1.3f);
+		float waveMod = ((float)wave + 1f) * 0.5f;
+		switch (type) {
+			case 0:
+				modifier = new PercentAttackDamageBoost(strength * waveMod * 0.1f);
+				break;
+			case 1:
+				modifier = new PercentAttackSpeedBoost(strength * waveMod * 0.05f);
+				break;
+			case 2: 
+				modifier = new FlatRangeBoost(strength * waveMod * 0.5f);
+				break;
+			case 3:
+				modifier = new CostReduction(Mathf.CeilToInt(strength * waveMod));
+				break;
+			default:
+				Debug.Log("spawning invalid modifier D:");
+				break;
+		}
+
+		showModifierUI = true;
+		pickerController.setModifier(modifier);
 	}
 }
