@@ -209,12 +209,14 @@ public class CostReduction: TowerStatModifier {
 
 	public override TowerStats applyModifier(TowerStats toModify) {
 		TowerStatsBasic ret = new TowerStatsBasic(toModify);
-		ret.cost -= amount;
+		if (ret.cost > 15) {
+			ret.cost -= amount;
+		}
 		return ret;
 	}
 
 	public override string getDescription() {
-		return -amount + " cost";
+		return -amount + " cost (if >15)";
 	}
 }
 
