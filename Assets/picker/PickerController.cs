@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -7,6 +8,7 @@ public class PickerController : MonoBehaviour {
 	private GameState state;
 	private GameObject[] pickerObjects;
 	private TowerStatModifier modifier;
+    private Boolean needsUpdate = false;
 
 	public static PickerController FindInScene() {
 		return GameObject.Find("PickerUI").GetComponent<PickerController>();
@@ -24,7 +26,7 @@ public class PickerController : MonoBehaviour {
 
 
 			RectTransform rectTransform = newPicker.GetComponent<RectTransform>();
-			rectTransform.SetParent(prototype.transform.parent);
+			rectTransform.SetParent(prototype.transform.parent, false);
 
 			newPicker.transform.localPosition = prototype.transform.localPosition + new Vector3(i * 300, 0);
 		}
@@ -40,8 +42,36 @@ public class PickerController : MonoBehaviour {
 	}
 
 	void Update() {
-	
-	}
+        if (state == null) {
+            state = GameState.FindInScene();
+        }
+	    if (!needsUpdate) {
+	        return;
+	    }
+	    needsUpdate = false;
+        //Update the text(s)
+        this.descriptionText.text = modifier.getDescription();
+        for (int i = 0; i < state.towerCount; i++) {
+            Text textUI = pickerObjects[i].transform.Find("Stats").gameObject.GetComponent<Text>();
+            TowerAI tower = state.towers[i].GetComponent<TowerAI>();
+            TowerStats stats = modifier.applyModifier(tower.getFinalStats());
+
+            string text = stats.description() +
+                "\nCost:" + stats.getCost() +
+                "\nAttack Rate: " + stats.getRateOfFire() +
+                "\nDamage: " + stats.getDamage() +
+                "\nRange: " + stats.getRange();
+
+            foreach (EnemyEffect effect in stats.getEffects()) {
+                text += "\nSlow: " + ((1 - effect.slowMultiplier) * 100) + "%" +
+                    "\nDamage Per Second: " + effect.damagePerSecond +
+                    "\nDuration: " + effect.duration + "s";
+            }
+
+            textUI.text = text;
+        }
+    }
+
 
 	public void merge(int id) {
 		state.towers[id].GetComponent<TowerAI>().statModifiers.Add(modifier);
@@ -50,28 +80,6 @@ public class PickerController : MonoBehaviour {
 
 	public void setModifier(TowerStatModifier modifier) {
 		this.modifier = modifier;
-
-		//Update the text(s)
-
-		this.descriptionText.text = modifier.getDescription();
-		for (int i = 0; i < state.towerCount; i++) {
-			Text textUI = pickerObjects[i].transform.Find("Stats").gameObject.GetComponent<Text>();
-			TowerAI tower = state.towers[i].GetComponent<TowerAI>();
-			TowerStats stats = modifier.applyModifier(tower.getFinalStats());
-
-			string text = stats.description() +
-				"\nCost:" + stats.getCost() +
-				"\nAttack Rate: " + stats.getRateOfFire() +
-				"\nDamage: " + stats.getDamage() +
-				"\nRange: " + stats.getRange();
-
-			foreach (EnemyEffect effect in stats.getEffects()) {
-				text += "\nSlow: " + ((1-effect.slowMultiplier) * 100) + "%" +
-					"\nDamage Per Second: " + effect.damagePerSecond +
-					"\nDuration: " + effect.duration + "s";
-			}
-
-			textUI.text = text;
-		}
+	    needsUpdate = true;
 	}
 }

@@ -22,7 +22,7 @@ public class TowerBuilder : MonoBehaviour {
 	        clickable.id = i;
 
 	        RectTransform rectTransform = obj.GetComponent<RectTransform>();
-			rectTransform.SetParent(holder.transform);
+			rectTransform.SetParent(holder.transform, false);
             rectTransform.anchoredPosition = new Vector3(-15, i * 35);
 	        towerChoiceClickables.Add(obj);
 	    }
