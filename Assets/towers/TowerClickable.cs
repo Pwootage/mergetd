@@ -40,6 +40,6 @@ public class TowerClickable : MonoBehaviour {
         if (state == null) {
             state = GameState.FindInScene();
         }
-        text.text = state.towers[id].GetComponent<TowerAI>().stats.description();
+		text.text = state.towers[id].GetComponent<TowerAI>().getFinalStats().description();
     }
 }

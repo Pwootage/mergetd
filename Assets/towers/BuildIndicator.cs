@@ -27,7 +27,7 @@ public class BuildIndicator : MonoBehaviour {
 			spriteRenderer.color = invisibleColor;
 		} else if (!state.map.isBuildable(x, y)) {
 			spriteRenderer.color = badColor;
-		} else if (state.getMoney() < builder.tower.GetComponent<TowerAI>().stats.cost) {
+		} else if (state.getMoney() < builder.tower.GetComponent<TowerAI>().getFinalStats().getCost()) {
 			spriteRenderer.color = badColor;
 		} else if (state.map.getTower(x, y) != null) {
 			spriteRenderer.color = warnColor;

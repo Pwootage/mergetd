@@ -6,7 +6,8 @@ using System.Linq;
 public class TowerAI : MonoBehaviour {
     public GameObject turret;
     public GameObject bullet;
-    public TowerStatsBasic stats;
+	[SerializeField]
+    private TowerStatsBasic stats;
     public List<TowerStatModifier> statModifiers = new List<TowerStatModifier>();
 
     private float attackTimer;

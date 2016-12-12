@@ -38,7 +38,8 @@ public class TowerBuilder : MonoBehaviour {
 			return;
 		}
 	    TowerAI tower = this.tower.GetComponent<TowerAI>();
-		if (state.getMoney() >= tower.stats.cost) {
+		int cost = tower.getFinalStats().getCost();
+		if (state.getMoney() >= cost) {
 
 			Vector3 loc = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			int x = Mathf.RoundToInt(loc.x);
@@ -48,12 +49,12 @@ public class TowerBuilder : MonoBehaviour {
 				return;
 			}
 
-			state.spendMoney(tower.stats.cost);
+			state.spendMoney(cost);
 
 			GameObject oldTower = state.map.getTower(x, y);
 			if (oldTower != null) {
 				TowerAI oldTowerAI = oldTower.GetComponent<TowerAI>();
-				state.GiveMoney(oldTowerAI.stats.cost / 2);
+				state.GiveMoney(oldTowerAI.getFinalStats().getCost() / 2);
 				Destroy(oldTower);
 			}
 
